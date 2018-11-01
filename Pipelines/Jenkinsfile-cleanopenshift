@@ -1,0 +1,69 @@
+!/usr/bin/groovy
+
+def lista = '/tmp/dclist'  
+node('master') {
+    stage('Get openshift dcs')
+    
+    def dcweb= sh " oc get deploymentconfig |grep dev-web|cut -d ' ' -f1 > ${lista}"
+    def dcapi= sh " oc get deploymentconfig |grep dev-api|cut -d ' ' -f1 >> ${lista}"
+    def dcpod= sh " oc get pods |grep dev-api|cut -d ' ' -f1 >> ${lista}"
+    def dcbuild= sh " oc get builds |grep dev-api|cut -d ' ' -f1 >> ${lista}"
+    echo "DCs adicionados em dclist"
+    sh "cat ${lista}"
+    stage('Limpando Openshift homolog') 
+    
+    script {
+      
+     openshift.withCluster( '' ) {
+    stage('Deletando as configurações de deploy')
+    // Delete all deployment configs with a particular label.
+    //openshift.selector("dc","cpe-branch-devops-api-2").delete()
+   
+    def file =new File( '/tmp/dclist' )
+    def lines = file.readLines()
+    for (item in lines) {
+   stage('Deletando ${item}')
+   println item
+   openshift.selector("dc",item).delete()
+  try {
+   stage('Deletando rota')
+   sh "oc delete route ${item}"
+  }
+  catch(error){
+      
+      echo "error"
+      
+  }
+  try {
+   stage('Deletando servico')
+   sh "oc delete service ${item}"
+  }
+  catch(error) {
+      echo "error"
+  }
+  try {
+   stage('Deletando PODs')
+   sh "oc delete pod ${item}"
+  }
+  catch(error){
+      
+      echo "error"
+  }
+   try{
+   stage('Deletando PODs')
+   sh "oc delete build ${item}"
+   }
+   catch(error){
+       echo "error"
+   }
+    }
+   }
+  
+
+   stage('Finalizado')
+   echo "OK"
+}
+   
+    
+     }
+
