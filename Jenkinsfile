@@ -11,14 +11,18 @@ def namespace="My Project"
   //String pomFileLocation = env.BUILD_CONTEXT_DIR ? "${env.BUILD_CONTEXT_DIR}/pom.xml" : "pom.xml"
 
 
-  stage('SCM Checkout') {
-    checkout scm
-  }
-
+ 
 
  
 //Use the node master because the oc client
 node('master') {
+  
+   stage('SCM Checkout') {
+    checkout scm
+  }
+
+  
+  
    stage('deploy App')
     script {
         try {
