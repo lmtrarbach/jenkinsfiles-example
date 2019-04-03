@@ -27,7 +27,7 @@ node('master') {
         
         openshift.withCluster() {
         openshift.withProject(namespace) {
-                           def aplicacao = openshift.newApp("--name=${env.BRANCH_NAME}-api-${env.BUILD_NUMBER}",  --allow-missing-images ","showBuildLogs=true").expose();
+                           def aplicacao = openshift.newApp("--name=${env.BRANCH_NAME}-api-${env.BUILD_NUMBER}","--image-stream=openshift/wildfly:10.0~${repositorioGit} --allow-missing-images","showBuildLogs=true").expose();
                            def objetoapp = aplicacao.object()
                            rocketSend channel: "jenkins-promote", message: 'Novo app  criado   com o nome  ${env.BRANCH_NAME}-api-${env.BUILD_NUMBER}'
                            def deployapp = openshiftDeploy(depCfg: '${env.BRANCH_NAME}-api-${env.BUILD_NUMBER}')
