@@ -1,8 +1,7 @@
 #!/usr/bin/groovy
-def repositorioGit = "https://github.com/AuthorizeNet/sample-code-java.git"
-def canalRocket = "jenkins-promote"
+def repositorioGit = "https://github.com/bparees/openshift-jee-sample.git"
 def mavenMirror ="MAVEN_MIRROR_URL='The nexus repo url'"
-def namespace="My Project"
+def namespace="deploy"
 //On this node you can build tests with maven
 //node('maven') {
 //  def mvnHome = "/usr/share/maven/"
