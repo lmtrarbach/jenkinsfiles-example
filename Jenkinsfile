@@ -4,39 +4,19 @@ def canalRocket = "jenkins-promote"
 def mavenMirror ="MAVEN_MIRROR_URL='The nexus repo url'"
 def namespace="Openshift project name"
 //On this node you can build tests with maven
-"""
 node('maven') {
 //  def mvnHome = "/usr/share/maven/"
 //  def mvnCmd = "${mvnHome}bin/mvn"
   def mvnCmd = 'mvn'
   //String pomFileLocation = env.BUILD_CONTEXT_DIR ? "${env.BUILD_CONTEXT_DIR}/pom.xml" : "pom.xml"
 
-"""
+
   stage('SCM Checkout') {
     checkout scm
   }
-"""
-  stage('SonarQube testes') {
- //       sh "mvn sonar:sonar -Dsonar.host.url=http://sonar-url.com -Dsonar.login=sdadas"
-   }
 
 
-
-  try {
-      //Build Step
-  stage('build') {
-    //${pomFileLocation}
-    sh "${mvnCmd} clean package spring-boot:run -Popenshift -B -DskipTests=true -f pom.xml "
-    //Sending a rocket message reporting sucess or failure
-    rocketSend channel: "jenkins-promote", message: 'Build executada com sucesso'
-}
-    } catch (e) {
-        rocketSend channel: "jenkins-promote", message: 'Build executada com erros '
-        throw e
-    }
-
-}
-"""
+ 
 //Use the node master because the oc client
 node('master') {
    stage('deploy App')
