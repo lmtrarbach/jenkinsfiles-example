@@ -24,7 +24,7 @@ node('master') {
   
    stage('deploy App')
     script {
-        try {
+        
         openshift.withCluster() {
         openshift.withProject(namespace) {
                            def aplicacao = openshift.newApp("--name=${env.BRANCH_NAME}-api-${env.BUILD_NUMBER}", "--image-stream=openshift/wildfly:10.0~${repositorioGit}#${env.BRANCH_NAME} --allow-missing-images ","--context-dir=/", "--source-secret=token-openshift","showBuildLogs=true").expose();
@@ -34,27 +34,10 @@ node('master') {
                         }
                       }
                     }
-        catch (err) {
-
-    }
 
                 }
 
-stage('deploy APP 2')
-    script {
-        try {
-        openshift.withCluster() {
-        openshift.withProject(namespace) {
-                           def aplicacao = openshift.newApp("--name=${env.BRANCH_NAME}-web-${env.BUILD_NUMBER}", "--image-stream=openshift/wildfly:10.0~${repositorioGit}#${env.BRANCH_NAME} --allow-missing-images ","--context-dir=/cpe-web", "--source-secret=git-api-secret","--build-env ${mavenMirror}","showBuildLogs=true").expose();
-                           def objetoapp = aplicacao.object()
-                           def deployapp = openshiftDeploy(depCfg: '${env.BRANCH_NAME}-web-${env.BUILD_NUMBER}')
-                        }
-                      }
-                    }
-        catch (err) {
 
-
-    }
 
                 }
 
