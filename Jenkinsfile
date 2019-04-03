@@ -28,7 +28,7 @@ node('master') {
         try {
         openshift.withCluster() {
         openshift.withProject(namespace) {
-                           def aplicacao = openshift.newApp("--name=${env.BRANCH_NAME}-api-${env.BUILD_NUMBER}", "--image-stream=openshift/wildfly:10.0~${repositorioGit}#${env.BRANCH_NAME} --allow-missing-images ","--context-dir=/cpe-api", "--source-secret=token-openshift","--build-env ${mavenMirror}","showBuildLogs=true").expose();
+                           def aplicacao = openshift.newApp("--name=${env.BRANCH_NAME}-api-${env.BUILD_NUMBER}", "--image-stream=openshift/wildfly:10.0~${repositorioGit}#${env.BRANCH_NAME} --allow-missing-images ","--context-dir=/", "--source-secret=token-openshift","showBuildLogs=true").expose();
                            def objetoapp = aplicacao.object()
                            rocketSend channel: "jenkins-promote", message: 'Novo app  criado   com o nome  ${env.BRANCH_NAME}-api-${env.BUILD_NUMBER}'
                            def deployapp = openshiftDeploy(depCfg: '${env.BRANCH_NAME}-api-${env.BUILD_NUMBER}')
@@ -48,7 +48,6 @@ stage('deploy APP 2')
         openshift.withProject(namespace) {
                            def aplicacao = openshift.newApp("--name=${env.BRANCH_NAME}-web-${env.BUILD_NUMBER}", "--image-stream=openshift/wildfly:10.0~${repositorioGit}#${env.BRANCH_NAME} --allow-missing-images ","--context-dir=/cpe-web", "--source-secret=git-api-secret","--build-env ${mavenMirror}","showBuildLogs=true").expose();
                            def objetoapp = aplicacao.object()
-                           rocketSend channel: "jenkins-promote", message: 'Novo app  criado   com o nome  ${env.BRANCH_NAME}-web-${env.BUILD_NUMBER}'
                            def deployapp = openshiftDeploy(depCfg: '${env.BRANCH_NAME}-web-${env.BUILD_NUMBER}')
                         }
                       }
