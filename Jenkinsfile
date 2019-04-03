@@ -2,7 +2,7 @@
 def repositorioGit = "https://github.com/AuthorizeNet/sample-code-java.git"
 def canalRocket = "jenkins-promote"
 def mavenMirror ="MAVEN_MIRROR_URL='The nexus repo url'"
-def namespace="Openshift project name"
+def namespace="My Project"
 //On this node you can build tests with maven
 node('maven') {
 //  def mvnHome = "/usr/share/maven/"
