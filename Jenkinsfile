@@ -52,8 +52,8 @@ try {
                   script {
         
                       openshift.withCluster() {
-                       openshift.withProject(namespace) {
-                           def aplicacao = openshift.newApp("--name=${env.BRANCH_NAME}-api-${env.BUILD_NUMBER}","--image-stream=openshift/wildfly:10.0~${repositorioGit} --allow-missing-images").expose();
+                       openshift.withProject("teste") {
+                           def aplicacao = openshift.newApp("--name=${env.BRANCH_NAME}-api-${env.BUILD_NUMBER}","--image-stream=openshift/wildfly:10.0~https://github.com/tiaguinholuz10/PetShop.git --allow-missing-images").expose();
                            def objetoapp = aplicacao.object()
                            def deployapp = openshiftDeploy(depCfg: '${env.BRANCH_NAME}-api-${env.BUILD_NUMBER}')
                                                          }
