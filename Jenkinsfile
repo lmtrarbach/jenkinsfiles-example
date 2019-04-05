@@ -1,27 +1,76 @@
-#!/usr/bin/groovy
-def repositorioGit = "https://github.com/bparees/openshift-jee-sample.git"
-def mavenMirror ="MAVEN_MIRROR_URL='The nexus repo url'"
-def namespace="deploy"
-//On this node you can build tests with maven
-//node('maven') {
-//  def mvnHome = "/usr/share/maven/"
-//  def mvnCmd = "${mvnHome}bin/mvn"
-//  def mvnCmd = 'mvn'
-  //String pomFileLocation = env.BUILD_CONTEXT_DIR ? "${env.BUILD_CONTEXT_DIR}/pom.xml" : "pom.xml"
+try {
+   timeout(time: 20, unit: 'MINUTES') {
+      def appName="openshift-jee-sample"
+      def project=""
 
+      node {
+        stage("Initialize") {
+          project = env.PROJECT_NAME
+        }
+      }
+      
+      
+      node("nodejs"){
+          
+          stage("Subindo node"){
+              
+              sh "echo hello Node"
+              
+              
+              
+              
+              
+          }
+          
+          
+      }
 
- 
+      node("maven") {
+        stage("Checkout") {
+          git url: "https://github.com/tiaguinholuz10/PetShop.git", branch: "master"
+        }
+        stage("Build WAR") {
+          sh "mvn clean install"
+          stash name:"war", includes:"pet-shop/pom.xml"
+        }
+      }
 
- 
-//Use the node master because the oc client
-node('master') {
+      node {
+        stage("Build Image") {
+          unstash name:"war"
+          sh "oc start-build ${appName}-docker --from-file=target/ROOT.war -n ${project}"
+          timeout(time: 20, unit: 'MINUTES') {
+            openshift.withCluster() {
+              openshift.withProject() {
+                def bc = openshift.selector('bc', "${appName}-docker")
+                echo "Found 1 ${bc.count()} buildconfig"
+                def blds = bc.related('builds')
+                blds.untilEach {
+                  return it.object().status.phase == "Complete"
+                }
+              }
+            }  
+          }
+        }
+        stage("Deploy") {
+          openshift.withCluster() {
+            openshift.withProject() {
+              def dc = openshift.selector('dc', "${appName}")
+              dc.rollout().status()
+            }
+          }
+        }
+      }
+   }
+} catch (err) {
+   echo "in catch block"
+   echo "Caught: ${err}"
+   currentBuild.result = 'FAILURE'
+   throw err
+}
   
-   stage('SCM Checkout') {
-    checkout scm
-  }
+node {
 
-  
-  
    stage('deploy App')
     script {
         
@@ -37,7 +86,7 @@ node('master') {
 
                 }
 
-
+}
 
                 
 
