@@ -1,4 +1,4 @@
-try {
+
    timeout(time: 20, unit: 'MINUTES') {
       def appName="openshift-jee-sample"
       def project="project"
