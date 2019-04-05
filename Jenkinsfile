@@ -38,9 +38,16 @@
                   git url: "https://github.com/tiaguinholuz10/PetShop.git", branch: "master"
                                  }
                stage("Build WAR") {
-                  sh "mvn test"
-                  sh "mvn clean install"
-                  stash name:"war", includes:"pet-shop/pom.xml"
+                  
+                  
+                  dir ('pet-shop') {
+                     sh 'pwd'
+
+                   
+                     //sh "mvn test"
+                     sh "mvn clean install"
+                     stash name:"war", includes:"pet-shop/pom.xml"
+                                   }
                                   }
                      }
 
